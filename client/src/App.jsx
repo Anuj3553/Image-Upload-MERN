@@ -7,17 +7,20 @@ function App() {
   const [image, setImage] = useState()
 
   const handleUpload = () => {
-    const formData = new FormData()
-    formData.append('file', file)
-    axios.post('http://localhost:3001/uploadImage', formData)
-      .then(res => {
-        console.log(res)
-        // After successful upload, fetch the updated image
-        axios.get('http://localhost:3001/getImage')
-          .then(res => setImage(res.data[res.data.length - 1].image)) // Fetch the last uploaded image
-          .catch(err => console.log(err))
-      })
-      .catch(err => console.log(err))
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = reader.result;
+      axios.post('http://localhost:3001/uploadImage', { image: imageData })
+        .then(res => {
+          console.log(res)
+          // After successful upload, fetch the updated image
+          axios.get('http://localhost:3001/getImage')
+            .then(res => setImage(res.data[res.data.length - 1].image)) // Fetch the last uploaded image
+            .catch(err => console.log(err))
+        })
+        .catch(err => console.log(err))
+    }
+    reader.readAsDataURL(file);
   }
 
   useEffect(() => {
@@ -33,7 +36,7 @@ function App() {
       <button onClick={handleUpload}>Upload</button>
       <br />
       {/* Display the current image */}
-      {image && <img src={`http://localhost:3001/images/` + image} alt="" />}
+      {image && <img src={image} alt="" />}
     </>
   )
 }
