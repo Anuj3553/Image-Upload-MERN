@@ -4,20 +4,27 @@ import axios from 'axios'
 
 function App() {
   const [file, setFile] = useState()
-  const[image, setImage] = useState()
+  const [image, setImage] = useState()
 
   const handleUpload = () => {
-    const formdata = new FormData()
-    formdata.append('file', file)
-    axios.post('http://localhost:3001/uploadImage', formdata)
-    .then(res => console.log(res))
-    .catch(err => console.log(err))
+    const formData = new FormData()
+    formData.append('file', file)
+    axios.post('http://localhost:3001/uploadImage', formData)
+      .then(res => {
+        console.log(res)
+        // After successful upload, fetch the updated image
+        axios.get('http://localhost:3001/getImage')
+          .then(res => setImage(res.data[res.data.length - 1].image)) // Fetch the last uploaded image
+          .catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
   }
 
   useEffect(() => {
+    // Fetch initial image when component mounts
     axios.get('http://localhost:3001/getImage')
-    .then(res => setImage(res.data[0].image))
-    .catch(err => console.log(err))
+      .then(res => setImage(res.data[res.data.length - 1].image)) // Fetch the last uploaded image
+      .catch(err => console.log(err))
   }, [])
 
   return (
@@ -25,7 +32,8 @@ function App() {
       <input type="file" onChange={e => setFile(e.target.files[0])} />
       <button onClick={handleUpload}>Upload</button>
       <br />
-      <img src={`http://localhost:3001/images/`+image} style={{width: '45vw'}} alt="" />
+      {/* Display the current image */}
+      {image && <img src={`http://localhost:3001/images/` + image} alt="" />}
     </>
   )
 }
