@@ -1,10 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser'); // Import bodyParser
 const UserModel = require('./models/Users');
 
 const app = express();
 app.use(cors());
+
+// Increase payload limits for body-parser
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 
 mongoose.connect('mongodb://127.0.0.1:27017/Employee');

@@ -36,7 +36,7 @@ function App() {
       <button onClick={handleUpload}>Upload</button>
       <br />
       {/* Display the current image */}
-      {image && <img src={image} alt="" />}
+      {image && <img src={image} style={{width : "30vw"}} alt="" />}
     </>
   )
 }
